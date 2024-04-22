@@ -1,0 +1,41 @@
+version: "3.1"
+services:
+  web:
+    build: ./
+    container_name: web
+    environment:
+      - ALLOW_OVERRIDE=true
+    ports:
+      - "81:80"
+    links:
+      - db
+    volumes:
+      - ./:/var/www/html/
+      - ./sistemaweb.conf:/etc/apache2/sites-enabled/sistemaweb.conf
+  db:
+    image: mariadb:10.8.2
+    container_name: docker-mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_USER: "admin"
+      MYSQL_PASSWORD: "admin"
+      MYSQL_DATABASE: "cinemapp"
+
+    ports:
+      - "8889:3306"
+    volumes:
+      - ./sql/database.sql:/var/lib/mysql/database.sql
+      - ./sql/database.sql:/docker-entrypoint-initdb.d/database.sql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    links:
+      - db
+    ports:
+      - 8890:80
+    environment:
+      MYSQL_USER: "admin"
+      MYSQL_PASSWORD: "admin"
+      MYSQL_DATABASE: "cinemapp"

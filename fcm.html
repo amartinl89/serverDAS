@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enviar Notificación FCM</title>
+</head>
+<body>
+    <h2>Enviar Notificación FCM</h2>
+    <form id="notificationForm">
+        <label for="titulo">Título:</label><br>
+        <input type="text" id="titulo" name="titulo" required><br><br>
+        <label for="mensaje">Mensaje:</label><br>
+        <textarea id="mensaje" name="mensaje" required></textarea><br><br>
+        <button type="submit">Enviar Notificación</button>
+    </form>
+
+    <script>
+        // Agregar un controlador de eventos para el envío del formulario
+        document.getElementById('notificationForm').addEventListener('submit', function(event) {
+            event.preventDefault();  // Evitar el envío del formulario por defecto
+
+            // Obtener los valores del formulario
+            var titulo = document.getElementById('titulo').value;
+            var mensaje = document.getElementById('mensaje').value;
+
+            // Enviar los datos del formulario al script PHP usando una solicitud HTTP POST
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'fcm.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onload = function() {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    // Éxito: Mostrar la respuesta del servidor
+                    alert('Notificación enviada correctamente.');
+                } else {
+                    // Error: Mostrar mensaje de error
+                    alert('Error al enviar la notificación.');
+                }
+            };
+            xhr.onerror = function() {
+                // Error de red
+                alert('Error de red al enviar la notificación.');
+            };
+            xhr.send('titulo=' + encodeURIComponent(titulo) + '&mensaje=' + encodeURIComponent(mensaje));
+        });
+    </script>
+</body>
+</html>
